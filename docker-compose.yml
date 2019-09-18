@@ -1,0 +1,35 @@
+version: '3.7'
+services:
+  http-server-test:
+    build: ./main/
+    container_name: http-server-test
+    tty: true
+    volumes:
+      - ./../src:/var/www/
+    links:
+      - db-server-test:mysql
+    networks:
+      # you may set custom IP addresses
+      my-networks:
+        ipv4_address: 172.16.21.10
+  db-server-test:
+    image: mariadb
+    container_name: db-server-test
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: magazine
+      MYSQL_USER: user
+      MYSQL_PASSWORD: pass
+    volumes:
+      - ./../mysql-data:/var/lib/mysql
+    networks:
+      # you may set custom IP addresses
+      my-networks:
+        ipv4_address: 172.16.21.11
+networks:
+  my-networks:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.16.21.0/16
